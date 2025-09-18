@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MultiStatusView">
+        <!-- 状态ID前缀 -->
+        <attr name="statusIdPrefix" format="string"/>
+        <!-- 默认状态 -->
+        <attr name="defaultStatus" format="string"/>
+        <!-- 是否启用调试模式 -->
+        <attr name="debugMode" format="boolean"/>
+    </declare-styleable>
+</resources>

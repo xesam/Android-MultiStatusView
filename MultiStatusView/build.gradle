@@ -1,0 +1,74 @@
+plugins {
+    alias(libs.plugins.android.library)
+    id "com.vanniktech.maven.publish" version "0.34.0"
+    id 'signing'
+}
+
+android {
+    namespace 'io.github.xesam.android.status'
+    compileSdk 36
+
+    defaultConfig {
+        minSdk 19
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    compileOnly libs.appcompat
+    testImplementation libs.junit
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
+}
+
+mavenPublishing {
+    coordinates("io.github.xesam", "android-multistatusview", "0.0.1")
+    pom {
+        name = 'MultiStatusView'
+        description = '一个轻量级、可灵活扩展的Android多状态视图管理库'
+        url = 'https://github.com/xesam/MultiStatusView'
+        inceptionYear = "2025"
+
+        licenses {
+            license {
+                name = 'The Apache License, Version 2.0'
+                url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                distribution = 'repo'
+            }
+        }
+
+        developers {
+            developer {
+                id = 'xesam'
+                name = 'xesam'
+                email = 'xesam@outlook.com'
+                organization = 'xesam'
+                organizationUrl = 'https://github.com/xesam'
+            }
+        }
+
+        scm {
+            connection = 'scm:git:git://github.com/xesam/Android-MultiStatusView.git'
+            developerConnection = 'scm:git:ssh://github.com:xesam/Android-MultiStatusView.git'
+            url = 'https://github.com/xesam/Android-MultiStatusView'
+        }
+    }
+
+    // 发布到Maven Central
+    publishToMavenCentral()
+    // 对发布的包进行签名
+    signAllPublications()
+}

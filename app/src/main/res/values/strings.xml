@@ -1,0 +1,78 @@
+<resources>
+    <string name="app_name">MultiStatus</string>
+    
+    <!-- 主页面 -->
+    <string name="main_title">MultiStatusView 演示</string>
+    <string name="main_subtitle">多种状态视图使用方式演示</string>
+    
+    <!-- 演示页面标题 -->
+    <string name="demo_xml_embedded">XML内嵌方式</string>
+    <string name="demo_resource_id">资源ID方式</string>
+    <string name="demo_layout_resource">布局资源方式</string>
+    <string name="demo_mixed_config">混合配置方式</string>
+    <string name="demo_advanced_features">高级功能演示</string>
+    
+    <!-- 状态文本 -->
+    <string name="status_content">内容状态</string>
+    <string name="status_loading">加载状态</string>
+    <string name="status_empty">空状态</string>
+    <string name="status_error">错误状态</string>
+    
+    <!-- 按钮文本 -->
+    <string name="btn_show_content">显示内容</string>
+    <string name="btn_show_loading">显示加载</string>
+    <string name="btn_show_empty">显示空状态</string>
+    <string name="btn_show_error">显示错误</string>
+    <string name="btn_auto_switch">自动切换</string>
+    <string name="btn_stop_auto">停止自动</string>
+    <string name="btn_clear_history">清空历史</string>
+    <string name="btn_use_alias">使用别名</string>
+    <string name="btn_quick_switch">快速切换</string>
+    <string name="btn_batch_switch">批量切换</string>
+    <string name="btn_register_test">注册测试</string>
+    
+    <!-- 内容状态 -->
+    <string name="content_title">内容已加载</string>
+    <string name="content_description">这是内容状态的示例，点击刷新按钮可以重新加载数据</string>
+    <string name="content_refresh">刷新</string>
+    
+    <!-- 加载状态 -->
+    <string name="loading_text">正在加载...</string>
+    <string name="loading_subtext">请稍候</string>
+    
+    <!-- 空状态 -->
+    <string name="empty_title">暂无数据</string>
+    <string name="empty_description">这里还没有任何内容</string>
+    <string name="empty_reload">重新加载</string>
+    
+    <!-- 错误状态 -->
+    <string name="error_title">加载失败</string>
+    <string name="error_description">网络连接出现问题</string>
+    <string name="error_retry">重试</string>
+    
+    <!-- 网络错误 -->
+    <string name="network_error_title">网络连接失败</string>
+    <string name="network_error_description">请检查您的网络连接</string>
+    <string name="network_retry">重新连接</string>
+    
+    <!-- 动态状态 -->
+    <string name="dynamic_title">动态状态</string>
+    <string name="dynamic_description">这是动态注册的状态</string>
+    <string name="dynamic_return">返回内容</string>
+    
+    <!-- 高级功能 -->
+    <string name="advanced_features_title">高级功能</string>
+    <string name="advanced_features_description">状态别名、监听器、错误处理等高级功能</string>
+    
+    <!-- 状态历史 -->
+    <string name="status_history_title">状态历史</string>
+    <string name="status_history_empty">暂无状态历史</string>
+    
+
+    
+    <!-- 提示文本 -->
+    <string name="toast_auto_switch_started">自动切换已启动</string>
+    <string name="toast_auto_switch_stopped">自动切换已停止</string>
+    <string name="toast_history_cleared">历史已清空</string>
+    <string name="toast_test_completed">测试已完成</string>
+</resources>
