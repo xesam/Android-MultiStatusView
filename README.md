@@ -21,7 +21,7 @@
 在您的 `build.gradle` 文件中添加：
 
 ```gradle
-implementation 'io.github.xesam:android-multistatusview:0.0.1'
+implementation 'io.github.xesam:android-multistatusview:0.0.2'
 ```
 
 或者直接引入项目：
