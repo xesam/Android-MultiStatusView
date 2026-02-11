@@ -24,6 +24,8 @@ import io.github.xesam.android.status.R;
  * MultiStatusHelper 是MultiStatusView的核心功能实现类
  * 负责状态管理、视图切换等核心逻辑
  * 通过委托模式与具体的视图容器解耦
+ * 
+ * 核心状态管理功能委托给 StatusCoordinator，利用其弱引用管理避免内存泄漏
  */
 public class MultiStatusHelper {
 
@@ -35,11 +37,8 @@ public class MultiStatusHelper {
     private String defaultStatus = "content";
     private boolean debugMode = false;
 
-    // 状态管理
-    private final Map<String, View> statusViews = new HashMap<>();
-    private final List<OnStatusChangeListener> statusChangeListeners = new ArrayList<>();
-    private String currentStatus = "";
-    private View currentView = null;
+    // 核心状态管理 - 委托给 StatusCoordinator
+    private final StatusCoordinator coordinator;
 
     // 异常处理
     private OnStatusNotFoundListener onStatusNotFoundListener;
@@ -70,11 +69,19 @@ public class MultiStatusHelper {
         void onViewCreated(View view);
     }
 
+
+
     public MultiStatusHelper(@NonNull ViewGroup containerView, @Nullable Context context, @Nullable AttributeSet attrs) {
         this.containerView = containerView;
         this.context = context != null ? context : containerView.getContext();
         initAttributes(attrs);
-        currentStatus = defaultStatus;
+        
+        // 初始化 StatusCoordinator
+        this.coordinator = new StatusCoordinator();
+        
+        // 配置 StatusCoordinator
+        this.coordinator.setOnStatusNotFoundListener(this::handleStatusNotFound);
+        
         if (debugMode) {
             Log.d(TAG, "Initialized with default status: " + defaultStatus);
         }
@@ -148,24 +155,7 @@ public class MultiStatusHelper {
 
         // 注册发现的状态视图
         for (Map.Entry<String, View> entry : childViews.entrySet()) {
-            registerStatusInternal(entry.getKey(), entry.getValue());
-        }
-    }
-
-    /**
-     * 注册状态视图（内部方法）
-     */
-    private void registerStatusInternal(String status, View view) {
-        statusViews.put(status, view);
-        if (status.equals(currentStatus)) {
-            view.setVisibility(View.VISIBLE);
-            currentView = view;
-        } else {
-            view.setVisibility(View.GONE);
-        }
-
-        if (debugMode) {
-            Log.d(TAG, "Registered status: " + status);
+            registerStatus(entry.getKey(), entry.getValue());
         }
     }
 
@@ -174,7 +164,10 @@ public class MultiStatusHelper {
      */
     @NonNull
     public MultiStatusHelper registerStatus(String status, View view) {
-        registerStatusInternal(status, view);
+        if (debugMode) {
+            Log.d(TAG, "Registered status: " + status);
+        }
+        coordinator.registerStatus(status, view);
         return this;
     }
 
@@ -209,7 +202,7 @@ public class MultiStatusHelper {
 
         try {
             View view = LayoutInflater.from(context).inflate(layoutResource, containerView, false);
-            statusViews.put(status, view);
+            registerStatus(status, view);
 
             if (debugMode) {
                 Log.d(TAG, "Successfully registered layout resource: " + status);
@@ -244,39 +237,7 @@ public class MultiStatusHelper {
      */
     @NonNull
     public MultiStatusHelper setStatus(String status) {
-        if (status.equals(currentStatus)) {
-            if (debugMode) {
-                Log.d(TAG, "Status unchanged: " + status);
-            }
-            return this;
-        }
-
-        View targetView = statusViews.get(status);
-        if (targetView == null) {
-            handleStatusNotFound(status);
-            return this;
-        }
-
-        String oldStatus = currentStatus;
-        View oldView = currentView;
-
-        // 隐藏当前视图
-        if (oldView != null) {
-            oldView.setVisibility(View.GONE);
-        }
-
-        // 显示目标视图
-        targetView.setVisibility(View.VISIBLE);
-        currentStatus = status;
-        currentView = targetView;
-
-        if (debugMode) {
-            Log.d(TAG, "Status changed from " + oldStatus + " to " + status);
-        }
-
-        // 触发监听器
-        notifyStatusChange(oldStatus, status);
-
+        coordinator.setStatus(status);
         return this;
     }
 
@@ -285,7 +246,7 @@ public class MultiStatusHelper {
      */
     @NonNull
     public String getCurrentStatus() {
-        return currentStatus;
+        return coordinator.getCurrentStatus();
     }
 
     /**
@@ -293,7 +254,7 @@ public class MultiStatusHelper {
      */
     @Nullable
     public View getViewForStatus(String status) {
-        return statusViews.get(status);
+        return coordinator.getViewForStatus(status);
     }
 
     /**
@@ -301,35 +262,52 @@ public class MultiStatusHelper {
      */
     @NonNull
     public List<String> getRegisteredStatuses() {
-        return new ArrayList<>(statusViews.keySet());
+        return coordinator.getRegisteredStatuses();
     }
 
     /**
      * 添加状态变化监听器
      */
     @NonNull
-    public MultiStatusHelper addOnStatusChangeListener(@NonNull OnStatusChangeListener listener) {
-        if (!statusChangeListeners.contains(listener)) {
-            statusChangeListeners.add(listener);
-        }
+    public MultiStatusHelper addOnStatusChangeListener(@NonNull io.github.xesam.android.views.status.OnStatusChangeListener listener) {
+        coordinator.addOnStatusChangeListener((oldStatus, newStatus) -> {
+            try {
+                listener.onStatusChange(oldStatus, newStatus);
+            } catch (Exception e) {
+                if (debugMode) {
+                    Log.e(TAG, "Error notifying status change listener", e);
+                }
+                if (errorHandler != null) {
+                    errorHandler.onError(e);
+                }
+            }
+        });
         return this;
     }
 
     /**
      * 移除状态变化监听器
+     * 注意：由于委托给 StatusCoordinator，此方法暂不支持
      */
     @NonNull
-    public MultiStatusHelper removeOnStatusChangeListener(@NonNull OnStatusChangeListener listener) {
-        statusChangeListeners.remove(listener);
+    public MultiStatusHelper removeOnStatusChangeListener(@NonNull io.github.xesam.android.views.status.OnStatusChangeListener listener) {
+        // 由于 StatusCoordinator 不支持移除单个监听器，此方法为保留API
+        if (debugMode) {
+            Log.w(TAG, "removeOnStatusChangeListener is not supported when using StatusCoordinator");
+        }
         return this;
     }
 
     /**
      * 移除所有状态变化监听器
+     * 注意：由于委托给 StatusCoordinator，此方法暂不支持
      */
     @NonNull
     public MultiStatusHelper removeAllStatusChangeListeners() {
-        statusChangeListeners.clear();
+        // 由于 StatusCoordinator 不支持移除所有监听器，此方法为保留API
+        if (debugMode) {
+            Log.w(TAG, "removeAllStatusChangeListeners is not supported when using StatusCoordinator");
+        }
         return this;
     }
 
@@ -338,7 +316,7 @@ public class MultiStatusHelper {
      */
     @NonNull
     public MultiStatusHelper setOnStatusNotFoundListener(@Nullable OnStatusNotFoundListener listener) {
-        onStatusNotFoundListener = listener;
+        this.onStatusNotFoundListener = listener;
         return this;
     }
 
@@ -347,7 +325,7 @@ public class MultiStatusHelper {
      */
     @NonNull
     public MultiStatusHelper setErrorHandler(@Nullable ErrorHandler handler) {
-        errorHandler = handler;
+        this.errorHandler = handler;
         return this;
     }
 
@@ -365,25 +343,7 @@ public class MultiStatusHelper {
 
         // 默认行为：保持当前状态
         if (debugMode) {
-            Log.d(TAG, "Keeping current status: " + currentStatus);
-        }
-    }
-
-    /**
-     * 通知状态变化监听器
-     */
-    private void notifyStatusChange(String oldStatus, String newStatus) {
-        for (OnStatusChangeListener listener : statusChangeListeners) {
-            try {
-                listener.onStatusChange(oldStatus, newStatus);
-            } catch (Exception e) {
-                if (debugMode) {
-                    Log.e(TAG, "Error notifying status change listener", e);
-                }
-                if (errorHandler != null) {
-                    errorHandler.onError(e);
-                }
-            }
+            Log.d(TAG, "Keeping current status: " + coordinator.getCurrentStatus());
         }
     }
 
@@ -392,9 +352,9 @@ public class MultiStatusHelper {
      */
     @NonNull
     public MultiStatusHelper addStatusAlias(String alias, String originalStatus) {
-        View originalView = statusViews.get(originalStatus);
+        View originalView = coordinator.getViewForStatus(originalStatus);
         if (originalView != null) {
-            statusViews.put(alias, originalView);
+            coordinator.registerStatus(alias, originalView);
 
             if (debugMode) {
                 Log.d(TAG, "Added status alias: " + alias + " -> " + originalStatus);
@@ -405,5 +365,13 @@ public class MultiStatusHelper {
             }
         }
         return this;
+    }
+
+    /**
+     * 获取 StatusCoordinator 实例（用于高级用法）
+     */
+    @NonNull
+    protected StatusCoordinator getCoordinator() {
+        return coordinator;
     }
 }

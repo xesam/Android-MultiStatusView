@@ -33,7 +33,7 @@ public class StatusCoordinator {
 
     // 状态管理 - 使用弱引用避免内存泄漏
     private final Map<String, WeakReference<View>> statusViews = new HashMap<>();
-    private final List<OnStatusChangeListener> statusChangeListeners = new ArrayList<>();
+    private final List<io.github.xesam.android.views.status.OnStatusChangeListener> statusChangeListeners = new ArrayList<>();
     private String currentStatus = "";
     private WeakReference<View> currentViewRef = null;
 
@@ -45,13 +45,6 @@ public class StatusCoordinator {
      */
     public interface OnStatusNotFoundListener {
         void onStatusNotFound(String status);
-    }
-
-    /**
-     * 状态切换监听器接口
-     */
-    public interface OnStatusChangeListener {
-        void onStatusChanged(String oldStatus, String newStatus);
     }
 
     /**
@@ -164,7 +157,7 @@ public class StatusCoordinator {
      * @return 当前实例，支持链式调用
      */
     @NonNull
-    public StatusCoordinator addOnStatusChangeListener(@NonNull OnStatusChangeListener listener) {
+    public StatusCoordinator addOnStatusChangeListener(@NonNull io.github.xesam.android.views.status.OnStatusChangeListener listener) {
         statusChangeListeners.add(listener);
         return this;
     }
@@ -195,8 +188,8 @@ public class StatusCoordinator {
      * 通知状态切换
      */
     private void notifyStatusChange(String oldStatus, String newStatus) {
-        for (OnStatusChangeListener listener : statusChangeListeners) {
-            listener.onStatusChanged(oldStatus, newStatus);
+        for (io.github.xesam.android.views.status.OnStatusChangeListener listener : statusChangeListeners) {
+            listener.onStatusChange(oldStatus, newStatus);
         }
     }
 }
