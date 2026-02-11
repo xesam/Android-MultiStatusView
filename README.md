@@ -155,7 +155,7 @@ fun setOnStatusNotFoundListener(listener: (String) -> Unit): MultiStatusView
 
 ## 演示应用
 
-应用包含6个演示页面：
+应用包含7个演示页面：
 
 1. **XML内嵌方式演示** - 展示XML直接声明状态子组件
 2. **资源ID方式演示** - 展示代码注册已存在视图
@@ -163,6 +163,7 @@ fun setOnStatusNotFoundListener(listener: (String) -> Unit): MultiStatusView
 4. **混合配置方式演示** - 展示多种方式混合使用
 5. **RelativeLayout版本演示** - 展示基于RelativeLayout的自定义实现
 6. **高级功能演示** - 展示监听器、错误处理等高级功能
+7. **StatusCoordinator演示** - 展示非侵入式状态管理协调器的使用
 
 ## 使用示例
 
@@ -277,6 +278,117 @@ multiStatusView
 
 // 使用别名切换状态
 multiStatusView.setStatus("network_error")  // 实际显示error状态
+```
+
+## StatusCoordinator
+
+### 什么是 StatusCoordinator
+
+`StatusCoordinator` 是一个轻量级的状态协调器，用于非侵入式地管理和切换多个状态视图。它与 `MultiStatusView` 不同，不需要替换现有组件，只是作为协调者管理现有视图。
+
+### 特点
+
+- **非侵入式**：不需要替换现有组件，只是作为协调者管理现有视图
+- **轻量级**：核心功能聚焦于状态切换，API简洁易用
+- **内存安全**：使用弱引用管理视图，避免内存泄漏
+- **向后兼容**：与 MultiStatusView 类似的API设计，便于用户理解和使用
+- **零依赖**：仅依赖Android SDK，无第三方库依赖
+
+### 使用场景
+
+- **现有页面不容易更换组件的情况**
+- **需要简单的状态控制功能**
+- **希望保持现有布局结构不变的场景**
+- **宿主页面动态增减视图的场景**
+
+### 基本使用
+
+#### 1. 创建并配置 StatusCoordinator
+
+```kotlin
+// 创建协调器
+val coordinator = StatusCoordinator()
+
+// 注册状态和对应的视图
+coordinator
+    .registerStatus("content", contentView)
+    .registerStatus("loading", loadingView)
+    .registerStatus("empty", emptyView)
+    .registerStatus("error", errorView)
+
+// 切换状态
+coordinator.setStatus("loading")
+// 加载完成后
+coordinator.setStatus("content")
+```
+
+#### 2. 状态监听
+
+```kotlin
+coordinator.addOnStatusChangeListener { oldStatus, newStatus ->
+    Log.d("StatusCoordinator", "状态切换: $oldStatus → $newStatus")
+    // 执行相关逻辑，如埋点、动画等
+}
+```
+
+#### 3. 错误处理
+
+```kotlin
+coordinator.setOnStatusNotFoundListener { status ->
+    Log.e("StatusCoordinator", "状态未找到或视图已回收: $status")
+    Toast.makeText(context, "状态未注册或视图已回收", Toast.LENGTH_SHORT).show()
+}
+```
+
+### API参考
+
+#### 核心方法
+
+```kotlin
+// 状态管理
+fun registerStatus(status: String, view: View): StatusCoordinator
+fun setStatus(status: String): StatusCoordinator
+fun getCurrentStatus(): String
+fun getViewForStatus(status: String): View?
+fun getRegisteredStatuses(): List<String>
+
+// 监听器
+fun addOnStatusChangeListener(listener: (oldStatus: String, newStatus: String) -> Unit): StatusCoordinator
+fun setOnStatusNotFoundListener(listener: (String) -> Unit): StatusCoordinator
+```
+
+### 与 MultiStatusView 的区别
+
+| 特性 | StatusCoordinator | MultiStatusView |
+|------|-------------------|----------------|
+| 实现方式 | 非侵入式，管理现有视图 | 容器式，替换现有布局 |
+| 内存管理 | 使用弱引用，避免内存泄漏 | 使用强引用 |
+| 配置方式 | 仅代码注册 | XML约定、代码注册多种方式 |
+| 适用场景 | 现有页面不容易更换组件 | 新页面或容易更换组件的场景 |
+| 灵活性 | 更高，不影响现有布局 | 较低，需要使用特定容器 |
+
+### 网络请求场景示例
+
+```kotlin
+private fun loadData() {
+    coordinator.setStatus("loading")
+
+    viewModel.loadData().observe(this) { result ->
+        when (result) {
+            is Success -> {
+                if (result.data.isEmpty()) {
+                    coordinator.setStatus("empty")
+                } else {
+                    coordinator.setStatus("content")
+                    // 更新UI
+                }
+            }
+            is Error -> {
+                coordinator.setStatus("error")
+            }
+        }
+    }
+}
 ```
 
 ## 兼容性
