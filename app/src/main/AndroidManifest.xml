@@ -51,6 +51,11 @@
             android:exported="false"
             android:label="RelativeLayout版本演示" />
             
+        <activity
+            android:name=".StatusCoordinatorActivity"
+            android:exported="false"
+            android:label="StatusCoordinator演示" />
+            
         </application>
 
 </manifest>

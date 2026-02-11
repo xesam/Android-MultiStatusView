@@ -73,6 +73,11 @@ class MainActivity : AppCompatActivity() {
                 "高级功能演示",
                 "展示监听器、错误处理等高级功能",
                 AdvancedFeaturesActivity::class.java
+            ),
+            DemoItem(
+                "StatusCoordinator演示",
+                "展示非侵入式的状态管理协调器",
+                StatusCoordinatorActivity::class.java
             )
         )
 
