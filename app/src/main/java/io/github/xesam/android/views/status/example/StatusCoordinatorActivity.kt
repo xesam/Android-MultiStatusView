@@ -16,7 +16,7 @@ import io.github.xesam.android.views.status.example.databinding.ActivityStatusCo
 class StatusCoordinatorActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityStatusCoordinatorBinding
-    private lateinit var coordinator: StatusViewManager
+    private lateinit var coordinator: StatusViewManager<String>
     private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {

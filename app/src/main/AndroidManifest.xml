@@ -55,6 +55,11 @@
             android:name=".StatusCoordinatorActivity"
             android:exported="false"
             android:label="StatusCoordinator演示" />
+
+        <activity
+            android:name=".StateManagerActivity"
+            android:exported="false"
+            android:label="StateManager演示" />
             
         </application>
 

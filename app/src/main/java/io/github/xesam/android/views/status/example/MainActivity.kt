@@ -78,6 +78,11 @@ class MainActivity : AppCompatActivity() {
                 "StatusCoordinator演示",
                 "展示非侵入式的状态管理协调器",
                 StatusCoordinatorActivity::class.java
+            ),
+            DemoItem(
+                "StateManager演示",
+                "展示通用泛型状态管理器，适用于任意目标对象",
+                StateManagerActivity::class.java
             )
         )
 
