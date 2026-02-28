@@ -96,7 +96,7 @@ public class StateViewWrapperTest {
         final String[] newState = new String[1];
 
         // 设置监听器
-        buttonWrapper.setOnStateChangedListener((oldStateName, newStateName) -> {
+        buttonWrapper.setOnStatusChangeListener((oldStateName, newStateName) -> {
             oldState[0] = oldStateName;
             newState[0] = newStateName;
         });

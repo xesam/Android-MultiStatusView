@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 
 public class StatusCoordinatorTest {
 
-    private StatusCoordinator coordinator;
+    private StatusCoordinator<String> coordinator;
     private MockView contentView;
     private MockView loadingView;
     private MockView emptyView;
@@ -17,7 +17,7 @@ public class StatusCoordinatorTest {
 
     @Before
     public void setUp() {
-        coordinator = new StatusCoordinator();
+        coordinator = new StatusCoordinator<String>();
         contentView = new MockView();
         loadingView = new MockView();
         emptyView = new MockView();
@@ -135,7 +135,7 @@ public class StatusCoordinatorTest {
                 .registerStatus("loading", loadingView);
 
         final int[] callCount = {0};
-        OnStatusChangeListener listener = (old, newS) -> {
+        OnStatusChangeListener<String> listener = (old, newS) -> {
             callCount[0]++;
         };
 
