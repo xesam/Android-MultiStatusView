@@ -252,21 +252,19 @@ public class MultiStatusHelper {
 
     /**
      * 移除状态变化监听器
-     * 注意：由于委托给 StatusCoordinator，此方法暂不支持
      */
     @NonNull
     public MultiStatusHelper removeOnStatusChangeListener(@NonNull OnStatusChangeListener listener) {
-        // 由于 StatusCoordinator 不支持移除单个监听器，此方法为保留API
+        coordinator.removeOnStatusChangeListener(listener);
         return this;
     }
 
     /**
      * 移除所有状态变化监听器
-     * 注意：由于委托给 StatusCoordinator，此方法暂不支持
      */
     @NonNull
     public MultiStatusHelper removeAllStatusChangeListeners() {
-        // 由于 StatusCoordinator 不支持移除所有监听器，此方法为保留API
+        coordinator.removeAllStatusChangeListeners();
         return this;
     }
 

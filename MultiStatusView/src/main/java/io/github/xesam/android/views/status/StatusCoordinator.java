@@ -156,6 +156,29 @@ public class StatusCoordinator {
     }
 
     /**
+     * 移除状态切换监听器
+     * 
+     * @param listener 要移除的监听器
+     * @return 当前实例，支持链式调用
+     */
+    @NonNull
+    public StatusCoordinator removeOnStatusChangeListener(@NonNull OnStatusChangeListener listener) {
+        statusChangeListeners.remove(listener);
+        return this;
+    }
+
+    /**
+     * 移除所有状态切换监听器
+     * 
+     * @return 当前实例，支持链式调用
+     */
+    @NonNull
+    public StatusCoordinator removeAllStatusChangeListeners() {
+        statusChangeListeners.clear();
+        return this;
+    }
+
+    /**
      * 设置状态未找到监听器
      * 
      * @param listener 状态未找到监听器
