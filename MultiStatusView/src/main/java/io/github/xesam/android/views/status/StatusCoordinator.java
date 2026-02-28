@@ -1,6 +1,5 @@
 package io.github.xesam.android.views.status;
 
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -29,11 +28,9 @@ import java.util.Map;
  */
 public class StatusCoordinator {
 
-    private static final String TAG = "StatusCoordinator";
-
     // 状态管理 - 使用弱引用避免内存泄漏
     private final Map<String, WeakReference<View>> statusViews = new HashMap<>();
-    private final List<io.github.xesam.android.views.status.OnStatusChangeListener> statusChangeListeners = new ArrayList<>();
+    private final List<OnStatusChangeListener> statusChangeListeners = new ArrayList<>();
     private String currentStatus = "";
     private WeakReference<View> currentViewRef = null;
 
@@ -71,7 +68,6 @@ public class StatusCoordinator {
             view.setVisibility(View.GONE);
         }
         
-        Log.d(TAG, "Registered status: " + status);
         return this;
     }
 
@@ -84,7 +80,6 @@ public class StatusCoordinator {
     @NonNull
     public StatusCoordinator setStatus(String status) {
         if (status.equals(currentStatus)) {
-            Log.d(TAG, "Status unchanged: " + status);
             return this;
         }
 
@@ -109,8 +104,6 @@ public class StatusCoordinator {
         targetView.setVisibility(View.VISIBLE);
         currentStatus = status;
         currentViewRef = targetViewRef;
-
-        Log.d(TAG, "Status changed from " + oldStatus + " to " + status);
 
         // 触发监听器
         notifyStatusChange(oldStatus, status);
@@ -157,7 +150,7 @@ public class StatusCoordinator {
      * @return 当前实例，支持链式调用
      */
     @NonNull
-    public StatusCoordinator addOnStatusChangeListener(@NonNull io.github.xesam.android.views.status.OnStatusChangeListener listener) {
+    public StatusCoordinator addOnStatusChangeListener(@NonNull OnStatusChangeListener listener) {
         statusChangeListeners.add(listener);
         return this;
     }
@@ -178,7 +171,6 @@ public class StatusCoordinator {
      * 处理状态未找到的情况
      */
     private void handleStatusNotFound(String status) {
-        Log.w(TAG, "Status not found or view recycled: " + status);
         if (onStatusNotFoundListener != null) {
             onStatusNotFoundListener.onStatusNotFound(status);
         }
@@ -188,7 +180,7 @@ public class StatusCoordinator {
      * 通知状态切换
      */
     private void notifyStatusChange(String oldStatus, String newStatus) {
-        for (io.github.xesam.android.views.status.OnStatusChangeListener listener : statusChangeListeners) {
+        for (OnStatusChangeListener listener : statusChangeListeners) {
             listener.onStatusChange(oldStatus, newStatus);
         }
     }

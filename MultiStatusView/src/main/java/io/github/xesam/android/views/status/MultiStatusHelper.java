@@ -3,7 +3,6 @@ package io.github.xesam.android.views.status;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +28,6 @@ import io.github.xesam.android.status.R;
  */
 public class MultiStatusHelper {
 
-    private static final String TAG = "MultiStatusHelper";
     private static final String DEFAULT_STATUS_ID_PREFIX = "status_";
 
     // 配置参数
@@ -81,10 +79,6 @@ public class MultiStatusHelper {
         
         // 配置 StatusCoordinator
         this.coordinator.setOnStatusNotFoundListener(this::handleStatusNotFound);
-        
-        if (debugMode) {
-            Log.d(TAG, "Initialized with default status: " + defaultStatus);
-        }
     }
 
     /**
@@ -118,10 +112,6 @@ public class MultiStatusHelper {
     public void autoDiscoverChildViews() {
         if (containerView.getChildCount() == 0) return;
 
-        if (debugMode) {
-            Log.d(TAG, "Auto-discovering child views with prefix: " + statusIdPrefix);
-        }
-
         // 获取所有子视图并创建映射
         Map<String, View> childViews = new HashMap<>();
         for (int i = 0; i < containerView.getChildCount(); i++) {
@@ -133,21 +123,13 @@ public class MultiStatusHelper {
                     String idResName = context.getResources().getResourceName(viewId);
                     String idName = idResName.substring(idResName.indexOf('/') + 1);
 
-                    if (debugMode) {
-                        Log.d(TAG, "Resource name: " + idResName + ", idName: " + idName);
-                    }
-
                     if (idName.startsWith(statusIdPrefix)) {
                         String statusName = idName.substring(statusIdPrefix.length());
                         childViews.put(statusName, child);
-
-                        if (debugMode) {
-                            Log.d(TAG, "Discovered status view: " + statusName);
-                        }
                     }
                 } catch (Exception e) {
-                    if (debugMode) {
-                        Log.w(TAG, "Failed to get resource name for view ID: " + viewId, e);
+                    if (errorHandler != null) {
+                        errorHandler.onError(e);
                     }
                 }
             }
@@ -164,9 +146,6 @@ public class MultiStatusHelper {
      */
     @NonNull
     public MultiStatusHelper registerStatus(String status, View view) {
-        if (debugMode) {
-            Log.d(TAG, "Registered status: " + status);
-        }
         coordinator.registerStatus(status, view);
         return this;
     }
@@ -196,21 +175,10 @@ public class MultiStatusHelper {
      */
     @NonNull
     public MultiStatusHelper registerLayoutResource(@NonNull String status, @LayoutRes int layoutResource) {
-        if (debugMode) {
-            Log.d(TAG, "Registering layout resource: " + status + " -> " + layoutResource);
-        }
-
         try {
             View view = LayoutInflater.from(context).inflate(layoutResource, containerView, false);
             registerStatus(status, view);
-
-            if (debugMode) {
-                Log.d(TAG, "Successfully registered layout resource: " + status);
-            }
         } catch (Exception e) {
-            if (debugMode) {
-                Log.e(TAG, "Error inflating layout resource: " + layoutResource, e);
-            }
             if (errorHandler != null) {
                 errorHandler.onError(e);
             }
@@ -269,14 +237,11 @@ public class MultiStatusHelper {
      * 添加状态变化监听器
      */
     @NonNull
-    public MultiStatusHelper addOnStatusChangeListener(@NonNull io.github.xesam.android.views.status.OnStatusChangeListener listener) {
+    public MultiStatusHelper addOnStatusChangeListener(@NonNull OnStatusChangeListener listener) {
         coordinator.addOnStatusChangeListener((oldStatus, newStatus) -> {
             try {
                 listener.onStatusChange(oldStatus, newStatus);
             } catch (Exception e) {
-                if (debugMode) {
-                    Log.e(TAG, "Error notifying status change listener", e);
-                }
                 if (errorHandler != null) {
                     errorHandler.onError(e);
                 }
@@ -290,11 +255,8 @@ public class MultiStatusHelper {
      * 注意：由于委托给 StatusCoordinator，此方法暂不支持
      */
     @NonNull
-    public MultiStatusHelper removeOnStatusChangeListener(@NonNull io.github.xesam.android.views.status.OnStatusChangeListener listener) {
+    public MultiStatusHelper removeOnStatusChangeListener(@NonNull OnStatusChangeListener listener) {
         // 由于 StatusCoordinator 不支持移除单个监听器，此方法为保留API
-        if (debugMode) {
-            Log.w(TAG, "removeOnStatusChangeListener is not supported when using StatusCoordinator");
-        }
         return this;
     }
 
@@ -305,9 +267,6 @@ public class MultiStatusHelper {
     @NonNull
     public MultiStatusHelper removeAllStatusChangeListeners() {
         // 由于 StatusCoordinator 不支持移除所有监听器，此方法为保留API
-        if (debugMode) {
-            Log.w(TAG, "removeAllStatusChangeListeners is not supported when using StatusCoordinator");
-        }
         return this;
     }
 
@@ -333,18 +292,11 @@ public class MultiStatusHelper {
      * 处理状态未找到的情况
      */
     private void handleStatusNotFound(String status) {
-        if (debugMode) {
-            Log.w(TAG, "Status not found: " + status);
-        }
-
         if (onStatusNotFoundListener != null) {
             onStatusNotFoundListener.onStatusNotFound(status);
         }
 
         // 默认行为：保持当前状态
-        if (debugMode) {
-            Log.d(TAG, "Keeping current status: " + coordinator.getCurrentStatus());
-        }
     }
 
     /**
@@ -355,14 +307,6 @@ public class MultiStatusHelper {
         View originalView = coordinator.getViewForStatus(originalStatus);
         if (originalView != null) {
             coordinator.registerStatus(alias, originalView);
-
-            if (debugMode) {
-                Log.d(TAG, "Added status alias: " + alias + " -> " + originalStatus);
-            }
-        } else {
-            if (debugMode) {
-                Log.w(TAG, "Cannot create alias for non-existent status: " + originalStatus);
-            }
         }
         return this;
     }
