@@ -36,7 +36,7 @@ dependencies {
 }
 
 mavenPublishing {
-    coordinates("io.github.xesam", "android-multistatusview", "0.0.2")
+    coordinates("io.github.xesam", "android-multistatusview", "0.0.3")
     pom {
         name = 'MultiStatusView'
         description = '一个轻量级、可灵活扩展的Android多状态视图管理库'
