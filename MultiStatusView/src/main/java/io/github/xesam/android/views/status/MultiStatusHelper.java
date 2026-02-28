@@ -19,13 +19,9 @@ import java.util.Map;
 import io.github.xesam.android.status.R;
 
 public class MultiStatusHelper {
-
     private static final String DEFAULT_STATUS_ID_PREFIX = "status_";
-
     private String statusIdPrefix = DEFAULT_STATUS_ID_PREFIX;
     private String defaultStatus = "content";
-    private boolean debugMode = false;
-
     private final StatusViewManager<String> coordinator;
 
     private OnStatusNotFoundListener onStatusNotFoundListener;
@@ -69,8 +65,6 @@ public class MultiStatusHelper {
                 if (defaultStatus == null) {
                     defaultStatus = "content";
                 }
-
-                debugMode = typedArray.getBoolean(R.styleable.MultiStatusView_debugMode, false);
             } finally {
                 typedArray.recycle();
             }

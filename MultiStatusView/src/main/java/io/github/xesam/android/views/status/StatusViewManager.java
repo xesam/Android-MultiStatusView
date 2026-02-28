@@ -15,14 +15,14 @@ import java.util.Objects;
 /**
  * StatusCoordinator 是一个轻量级的状态协调器
  * 用于非侵入式地管理和切换多个状态视图
- *
+ * <p>
  * 特点：
  * 1. 非侵入式：不需要替换现有组件，只是作为协调者管理现有视图
  * 2. 轻量级：核心功能聚焦于状态切换，API简洁易用
  * 3. 兼容性：与 MultiStatusView 类似的API设计，便于用户理解和使用
  * 4. 内存安全：使用弱引用管理视图，避免内存泄漏
  * 5. 泛型支持：支持任意类型的状态，如 String、Enum、Integer 等
- *
+ * <p>
  * 使用场景：
  * - 现有页面不容易更换组件的情况
  * - 需要简单的状态控制功能
@@ -31,8 +31,6 @@ import java.util.Objects;
  * @param <S> 状态类型
  */
 public class StatusViewManager<S> {
-
-    private static final Object NO_INITIAL_STATUS = new Object();
 
     private final Map<S, WeakReference<View>> statusViews = new HashMap<>();
     private final List<OnStatusChangeListener<S>> statusChangeListeners = new ArrayList<>();
