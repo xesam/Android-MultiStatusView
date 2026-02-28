@@ -7,9 +7,9 @@ import android.view.View;
 
 import static org.junit.Assert.*;
 
-public class StatusCoordinatorTest {
+public class StatusViewManagerTest {
 
-    private StatusCoordinator<String> coordinator;
+    private StatusViewManager<String> coordinator;
     private MockView contentView;
     private MockView loadingView;
     private MockView emptyView;
@@ -17,7 +17,7 @@ public class StatusCoordinatorTest {
 
     @Before
     public void setUp() {
-        coordinator = new StatusCoordinator<String>();
+        coordinator = new StatusViewManager<String>();
         contentView = new MockView();
         loadingView = new MockView();
         emptyView = new MockView();

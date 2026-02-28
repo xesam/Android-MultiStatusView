@@ -26,7 +26,7 @@ public class MultiStatusHelper {
     private String defaultStatus = "content";
     private boolean debugMode = false;
 
-    private final StatusCoordinator<String> coordinator;
+    private final StatusViewManager<String> coordinator;
 
     private OnStatusNotFoundListener onStatusNotFoundListener;
     private ErrorHandler errorHandler;
@@ -51,7 +51,7 @@ public class MultiStatusHelper {
         this.context = context != null ? context : containerView.getContext();
         initAttributes(attrs);
 
-        this.coordinator = new StatusCoordinator<String>();
+        this.coordinator = new StatusViewManager<String>();
 
         this.coordinator.setOnStatusNotFoundListener(this::handleStatusNotFound);
     }
@@ -226,7 +226,7 @@ public class MultiStatusHelper {
     }
 
     @NonNull
-    protected StatusCoordinator<String> getCoordinator() {
+    protected StatusViewManager<String> getCoordinator() {
         return coordinator;
     }
 }

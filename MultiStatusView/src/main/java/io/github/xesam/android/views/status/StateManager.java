@@ -14,7 +14,7 @@ import java.util.Set;
  * @param <S> 状态名称类型
  * @param <T> 目标对象类型
  */
-public class StateViewWrapper<S, T> {
+public class StateManager<S, T> {
 
     private final Map<S, StateApplier<T>> states = new HashMap<>();
 
@@ -26,12 +26,12 @@ public class StateViewWrapper<S, T> {
 
     private final T target;
 
-    public StateViewWrapper(@NonNull T target) {
+    public StateManager(@NonNull T target) {
         this.target = target;
     }
 
     @NonNull
-    public StateViewWrapper<S, T> registerState(@NonNull S stateName, @NonNull StateApplier<T> stateApplier) {
+    public StateManager<S, T> registerState(@NonNull S stateName, @NonNull StateApplier<T> stateApplier) {
         if (stateName == null) {
             throw new IllegalArgumentException("State name cannot be null");
         }
@@ -46,7 +46,7 @@ public class StateViewWrapper<S, T> {
     }
 
     @NonNull
-    public StateViewWrapper<S, T> switchToState(@NonNull S stateName) {
+    public StateManager<S, T> switchToState(@NonNull S stateName) {
         S actualStateName = stateAliases.getOrDefault(stateName, stateName);
         StateApplier<T> stateApplier = states.get(actualStateName);
         if (stateApplier != null) {
@@ -73,13 +73,13 @@ public class StateViewWrapper<S, T> {
     }
 
     @NonNull
-    public StateViewWrapper<S, T> setOnStatusChangeListener(@NonNull OnStatusChangeListener<S> listener) {
+    public StateManager<S, T> setOnStatusChangeListener(@NonNull OnStatusChangeListener<S> listener) {
         this.onStatusChangeListener = listener;
         return this;
     }
 
     @NonNull
-    public StateViewWrapper<S, T> addStateAlias(@NonNull S alias, @NonNull S originalStateName) {
+    public StateManager<S, T> addStateAlias(@NonNull S alias, @NonNull S originalStateName) {
         if (alias == null || originalStateName == null) {
             throw new IllegalArgumentException("Alias and original state name cannot be null");
         }

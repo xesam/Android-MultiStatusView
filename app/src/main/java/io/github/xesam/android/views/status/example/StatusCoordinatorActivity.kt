@@ -5,7 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import io.github.xesam.android.views.status.StatusCoordinator
+import io.github.xesam.android.views.status.StatusViewManager
 import io.github.xesam.android.views.status.example.databinding.ActivityStatusCoordinatorBinding
 
 /**
@@ -16,7 +16,7 @@ import io.github.xesam.android.views.status.example.databinding.ActivityStatusCo
 class StatusCoordinatorActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityStatusCoordinatorBinding
-    private lateinit var coordinator: StatusCoordinator
+    private lateinit var coordinator: StatusViewManager
     private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +38,7 @@ class StatusCoordinatorActivity : AppCompatActivity() {
 
     private fun setupStatusCoordinator() {
         // 创建并配置 StatusCoordinator
-        coordinator = StatusCoordinator()
+        coordinator = StatusViewManager()
 
         // 注册状态和对应的视图
         coordinator

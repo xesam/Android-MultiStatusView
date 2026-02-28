@@ -15,7 +15,7 @@ import static org.mockito.Mockito.verify;
 /**
  * StateViewWrapper 单元测试
  */
-public class StateViewWrapperTest {
+public class StateManagerTest {
 
     @Mock
     private Button mockButton;
@@ -23,14 +23,14 @@ public class StateViewWrapperTest {
     @Mock
     private TextView mockTextView;
 
-    private StateViewWrapper<String, Button> buttonWrapper;
-    private StateViewWrapper<String, TextView> textViewWrapper;
+    private StateManager<String, Button> buttonWrapper;
+    private StateManager<String, TextView> textViewWrapper;
 
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        buttonWrapper = new StateViewWrapper<>(mockButton);
-        textViewWrapper = new StateViewWrapper<>(mockTextView);
+        buttonWrapper = new StateManager<>(mockButton);
+        textViewWrapper = new StateManager<>(mockTextView);
     }
 
     @Test

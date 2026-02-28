@@ -30,7 +30,7 @@ import java.util.Objects;
  *
  * @param <S> 状态类型
  */
-public class StatusCoordinator<S> {
+public class StatusViewManager<S> {
 
     private static final Object NO_INITIAL_STATUS = new Object();
 
@@ -46,7 +46,7 @@ public class StatusCoordinator<S> {
     }
 
     @NonNull
-    public StatusCoordinator<S> registerStatus(@NonNull S status, @NonNull View view) {
+    public StatusViewManager<S> registerStatus(@NonNull S status, @NonNull View view) {
         if (view == null) {
             throw new IllegalArgumentException("View cannot be null");
         }
@@ -65,7 +65,7 @@ public class StatusCoordinator<S> {
     }
 
     @NonNull
-    public StatusCoordinator<S> setStatus(@NonNull S status) {
+    public StatusViewManager<S> setStatus(@NonNull S status) {
         if (Objects.equals(status, currentStatus)) {
             return this;
         }
@@ -111,25 +111,25 @@ public class StatusCoordinator<S> {
     }
 
     @NonNull
-    public StatusCoordinator<S> addOnStatusChangeListener(@NonNull OnStatusChangeListener<S> listener) {
+    public StatusViewManager<S> addOnStatusChangeListener(@NonNull OnStatusChangeListener<S> listener) {
         statusChangeListeners.add(listener);
         return this;
     }
 
     @NonNull
-    public StatusCoordinator<S> removeOnStatusChangeListener(@NonNull OnStatusChangeListener<S> listener) {
+    public StatusViewManager<S> removeOnStatusChangeListener(@NonNull OnStatusChangeListener<S> listener) {
         statusChangeListeners.remove(listener);
         return this;
     }
 
     @NonNull
-    public StatusCoordinator<S> removeAllStatusChangeListeners() {
+    public StatusViewManager<S> removeAllStatusChangeListeners() {
         statusChangeListeners.clear();
         return this;
     }
 
     @NonNull
-    public StatusCoordinator<S> setOnStatusNotFoundListener(@Nullable OnStatusNotFoundListener<S> listener) {
+    public StatusViewManager<S> setOnStatusNotFoundListener(@Nullable OnStatusNotFoundListener<S> listener) {
         this.onStatusNotFoundListener = listener;
         return this;
     }

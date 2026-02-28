@@ -8,15 +8,15 @@ import static org.junit.Assert.*;
 /**
  * StateViewWrapper 单元测试（简化版，使用 TestView）
  */
-public class StateViewWrapperTestSimple {
+public class StateManagerTestSimple {
 
     private TestView testView;
-    private StateViewWrapper<String, TestView> wrapper;
+    private StateManager<String, TestView> wrapper;
 
     @Before
     public void setUp() {
         testView = new TestView();
-        wrapper = new StateViewWrapper<>(testView);
+        wrapper = new StateManager<>(testView);
     }
 
     @Test
