@@ -47,7 +47,7 @@ public class StateManager<S, T> {
 
     @NonNull
     public StateManager<S, T> switchToState(@NonNull S stateName) {
-        S actualStateName = stateAliases.getOrDefault(stateName, stateName);
+        S actualStateName = stateAliases.containsKey(stateName) ? stateAliases.get(stateName) : stateName;
         StateApplier<T> stateApplier = states.get(actualStateName);
         if (stateApplier != null) {
             S oldStateName = currentStateName;
