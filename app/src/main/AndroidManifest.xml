@@ -52,9 +52,9 @@
             android:label="RelativeLayout版本演示" />
             
         <activity
-            android:name=".StatusCoordinatorActivity"
+            android:name=".StatusViewManagerActivity"
             android:exported="false"
-            android:label="StatusCoordinator演示" />
+            android:label="StatusViewManager演示" />
 
         <activity
             android:name=".StateManagerActivity"

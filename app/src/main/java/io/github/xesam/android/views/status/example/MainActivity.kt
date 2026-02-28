@@ -75,9 +75,9 @@ class MainActivity : AppCompatActivity() {
                 AdvancedFeaturesActivity::class.java
             ),
             DemoItem(
-                "StatusCoordinator演示",
+                "StatusViewManager演示",
                 "展示非侵入式的状态管理协调器",
-                StatusCoordinatorActivity::class.java
+                StatusViewManagerActivity::class.java
             ),
             DemoItem(
                 "StateManager演示",
